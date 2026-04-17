@@ -1,0 +1,125 @@
+<div class="container">
+  <!-- ── Benchmark Panel ── -->
+  <app-benchmark-panel 
+    trackName="Track 4 — Lit Elements (Autonomous)"
+    trackDescription="Measures real-time performance of Autonomous Custom Elements (<ds-table-row>) for each search/filter/delete operation."
+    accentColor="#f97316" 
+    accentBg="rgba(249,115,22,0.08)" 
+    accentBorder="rgba(249,115,22,0.25)" 
+    [metrics]="metrics()"
+    [isRunning]="isRunning()" 
+    [rowCount]="limit()" 
+    (rowCountChange)="onLimitChange($event)"
+    (runBenchmark)="onRunBenchmark()" 
+    strategyBadge="Autonomous Lit Elements" />
+
+  <!-- ── Header ── -->
+  <header class="header">
+    <h1 class="title">Track 4: Lit Autonomous Elements</h1>
+    <p class="subtitle">
+      Connected to MeiliSearch (port 7700) with 100k records.
+    </p>
+  </header>
+
+  <!-- Toolbar -->
+  <div class="toolbar">
+    <div class="search-col">
+      <ds-input
+        [label]="'Search Products'" 
+        [placeholder]="'Search by name, brand, or category...'" 
+        [icon]="'search'"
+        [value]="searchQuery()" 
+        (input)="onSearchChange(getSearchEventValue($event))">
+      </ds-input>
+    </div>
+    <div class="filter-col">
+      <ds-dropdown
+        [label]="'Availability'"
+        [placeholder]="'All Statuses'" 
+        [value]="availability()"
+        [options]="availabilityOptions"
+        (ds-change)="onAvailabilityChange($any($event).detail.value)">
+      </ds-dropdown>
+    </div>
+    <div class="actions-col">
+      <ds-button
+        [variant]="'outline'" 
+        style="width: 100%; height: 40px;" 
+        (click)="onClearFilters()">
+        Clear Filters
+      </ds-button>
+    </div>
+  </div>
+
+  <!-- Pagination -->
+  <div class="pagination-bar">
+    <p class="pagination-info">
+      Showing {{ pageInfoStart() }} to {{ pageInfoEnd() }} of {{ totalCount() }} results
+    </p>
+    <div class="pagination-controls">
+      <ds-button
+        [variant]="'outline'" 
+        [tiny]="true" 
+        [disabled]="page() === 1 || loading()" 
+        (click)="onPrevPage()">
+        Previous
+      </ds-button>
+      <ds-button
+        [variant]="'outline'" 
+        [tiny]="true" 
+        [disabled]="page() * limit() >= totalCount() || loading()"
+        (click)="onNextPage()">
+        Next
+      </ds-button>
+    </div>
+  </div>
+
+  <!-- Table -->
+  <div class="table-container" role="table">
+    @if (loading()) {
+    <div class="loading-overlay">
+      <!-- Loading content -->
+    </div>
+    } @else {
+      <!-- Table Header -->
+      <div class="table-header-flex" role="rowgroup">
+        @for (col of columns; track col) {
+          <div class="table-header-cell" role="columnheader">{{ col }}</div>
+        }
+        <div class="table-header-cell action-cell" role="columnheader">Actions</div>
+      </div>
+
+      <!-- Table Body -->
+      <div class="table-body-flex" role="rowgroup">
+        @if (loading()) {
+          <div class="loading-overlay">
+            <div class="spinner"></div>
+          </div>
+        }
+
+        @for (prod of products(); track trackById($index, prod)) {
+          <ds-table-row
+            [attr.row-id]="prod['Index']"
+            [columns]="columns"
+            [rowData]="prod"
+            role="row"
+            style="display: flex;"
+            >
+              <ds-button
+                [variant]="'danger'" 
+                [tiny]="true" 
+                (click)="onDelete(prod['Index'])">
+                Delete
+              </ds-button>
+          </ds-table-row>
+        } @empty {
+          @if (!loading()) {
+            <div class="empty-state">
+              No products found.
+            </div>
+          }
+        }
+      </div>
+    }
+  </div>
+</div>

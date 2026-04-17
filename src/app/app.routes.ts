@@ -4,23 +4,24 @@ export const routes: Routes = [
   {
     path: '',
     loadComponent: () =>
-      import('./pages/angular-table/angular-table.component').then(
-        (m) => m.AngularTableComponent
-      ),
+      import('./pages/angular-table/angular-table.component').then((m) => m.AngularTableComponent),
   },
   {
     path: 'angular-native',
     loadComponent: () =>
       import('./pages/angular-native/angular-native.component').then(
-        (m) => m.AngularNativeComponent
+        (m) => m.AngularNativeComponent,
       ),
   },
   {
     path: 'test-native',
     loadComponent: () =>
-      import('./pages/test-native/test-native.component').then(
-        (m) => m.TestNativeComponent
-      ),
+      import('./pages/test-native/test-native.component').then((m) => m.TestNativeComponent),
+  },
+  {
+    path: 'angular-lit',
+    loadComponent: () =>
+      import('./pages/angular-lit/angular-lit.component').then((m) => m.AngularLitComponent),
   },
   { path: '**', redirectTo: '' },
 ];
