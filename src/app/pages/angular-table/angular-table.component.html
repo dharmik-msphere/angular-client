@@ -1,0 +1,95 @@
+<div class="container">
+  <!-- ── Benchmark Panel ── -->
+  <app-benchmark-panel trackName="Track 4 — Pure Angular Components"
+    trackDescription="Measures real-time Angular render and commit performance for each table interaction."
+    accentColor="#6366f1" accentBg="rgba(99,102,241,0.08)" accentBorder="rgba(99,102,241,0.25)" [metrics]="metrics()"
+    [isRunning]="isRunning()" [rowCount]="limit()" (rowCountChange)="onLimitChange($event)"
+    (runBenchmark)="onRunBenchmark()" strategyBadge="Angular Client" />
+
+  <!-- ── Header ── -->
+  <header class="header">
+    <h1 class="title">Track 4: Angular Components</h1>
+    <p class="subtitle">
+      Connected to MeiliSearch (port 7700) with 100k records.
+    </p>
+  </header>
+
+  <!-- Toolbar -->
+  <div class="toolbar">
+    <div class="search-col">
+      <app-input label="Search Products" placeholder="Search by name, brand, or category..." icon="search"
+        [value]="searchQuery()" (valueChange)="onSearchChange($event)" />
+    </div>
+    <div class="filter-col">
+      <app-dropdown label="Availability" placeholder="All Statuses" [value]="availability()"
+        [options]="availabilityOptions" (valueChange)="onAvailabilityChange($event)" />
+    </div>
+    <div class="actions-col">
+      <app-button variant="outline" [fullWidth]="true" (clicked)="onClearFilters()">
+        Clear Filters
+      </app-button>
+    </div>
+  </div>
+
+  <!-- Pagination -->
+  <div class="pagination-bar">
+    <p class="pagination-info">
+      Showing {{ pageInfoStart() }} to {{ pageInfoEnd() }} of {{ totalCount() }} results
+    </p>
+    <div class="pagination-controls">
+      <app-button variant="outline" size="sm" [disabled]="page() === 1 || loading()" (clicked)="onPrevPage()">
+        Previous
+      </app-button>
+      <app-button variant="outline" size="sm" [disabled]="page() * limit() >= totalCount() || loading()"
+        (clicked)="onNextPage()">
+        Next
+      </app-button>
+    </div>
+  </div>
+
+  <!-- Table -->
+  <div class="table-container">
+    @if (loading()) {
+    <div class="loading-overlay">
+      <!-- Loading content -->
+    </div>
+    } @else {
+    <table class="table">
+      <thead>
+        <tr class="table-header-row">
+          @for (col of columns; track col) {
+          <th class="table-header-cell">{{ col }}</th>
+          }
+          <th class="table-header-cell text-right">Actions</th>
+        </tr>
+      </thead>
+      <tbody class="table-body">
+        @if (loading()) {
+        <div class="loading-overlay">
+          <div class="spinner"></div>
+        </div>
+        }
+
+        @for (prod of products(); track trackById($index, prod)) {
+        <tr app-table-row [columns]="columns" [rowData]="prod" [rowId]="prod['Index']">
+          <div class="actions-cell">
+            <app-button variant="destructive" size="sm" (clicked)="onDelete(prod['Index'])">
+              Delete
+            </app-button>
+          </div>
+        </tr>
+        } @empty {
+        @if (!loading()) {
+        <tr>
+          <td [attr.colspan]="columns.length + 1" class="empty-state">
+            No products found.
+          </td>
+        </tr>
+        }
+        }
+      </tbody>
+    </table>
+    }
+
+  </div>
+</div>

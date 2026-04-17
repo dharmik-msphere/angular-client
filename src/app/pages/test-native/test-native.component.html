@@ -1,0 +1,36 @@
+<div style="padding: 2rem; font-family: sans-serif;">
+  <h1>Test Native Row Component</h1>
+  
+  <table style="width: 100%; border-collapse: collapse; margin-top: 2rem; border: 1px solid #ddd;">
+    <thead>
+      <tr style="background: #f4f4f4; text-align: left;">
+        <th style="padding: 12px; border-bottom: 2px solid #ddd;">Index</th>
+        <th style="padding: 12px; border-bottom: 2px solid #ddd;">Name</th>
+        <th style="padding: 12px; border-bottom: 2px solid #ddd;">Brand</th>
+        <th style="padding: 12px; border-bottom: 2px solid #ddd;">Price</th>
+        <th style="padding: 12px; border-bottom: 2px solid #ddd; text-align: right;">Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr 
+        is="ds-table-row-native" 
+        [attr.data-row-id]="product.Index"
+        [attr.data-index]="product.Index"
+        [attr.data-name]="product.Name"
+        [attr.data-brand]="product.Brand"
+        [attr.data-price]="product.Price"
+        [attr.data-columns]="columnsStr"
+      >
+        <td style="padding: 12px; text-align: right;">
+          <button is="ds-button-native" variant="danger" tiny="true">Delete</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  
+  <div style="margin-top: 2rem; padding: 1rem; background: #f9f9f9; border-radius: 8px;">
+    <h3>Expected Behavior:</h3>
+    <p>The row above should show 5 cells in total (Index, Name, Brand, Price, and the Action cell).</p>
+    <p>If only the "Action" cell is visible, then the <code>ds-table-row-native</code> internal rendering failed.</p>
+  </div>
+</div>

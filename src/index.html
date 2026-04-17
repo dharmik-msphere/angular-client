@@ -2,10 +2,16 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <title>AngularClient</title>
+  <title>Angular Benchmark — MeiliSearch Table</title>
   <base href="/">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Angular 21 performance benchmark with MeiliSearch — render, hydration, and interactive timing">
   <link rel="icon" type="image/x-icon" href="favicon.ico">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <!-- Capture page start time BEFORE Angular bootstraps — used for hydration timing -->
+  <script>window.__APP_START__ = performance.now();</script>
 </head>
 <body>
   <app-root></app-root>

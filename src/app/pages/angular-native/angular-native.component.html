@@ -1,0 +1,151 @@
+<div class="container">
+  <!-- ── Benchmark Panel ── -->
+  <app-benchmark-panel 
+    trackName="Track 5 — Native Custom Elements"
+    trackDescription="Measures real-time performance of customized built-in elements (<tr is='...'>) for each search/filter/delete operation."
+    accentColor="#06b6d4" 
+    accentBg="rgba(6,182,212,0.08)" 
+    accentBorder="rgba(6,182,212,0.25)" 
+    [metrics]="metrics()"
+    [isRunning]="isRunning()" 
+    [rowCount]="limit()" 
+    (rowCountChange)="onLimitChange($event)"
+    (runBenchmark)="onRunBenchmark()" 
+    strategyBadge="Customized Built-ins" />
+
+  <!-- ── Header ── -->
+  <header class="header">
+    <h1 class="title">Track 5: Native Customized Built-ins</h1>
+    <p class="subtitle">
+      Connected to MeiliSearch (port 7700) with 100k records.
+    </p>
+  </header>
+
+  <!-- Toolbar -->
+  <div class="toolbar">
+    <div class="search-col">
+      <input 
+        is="ds-input-native" 
+        [attr.label]="'Search Products'" 
+        [attr.placeholder]="'Search by name, brand, or category...'" 
+        [attr.icon]="'search'"
+        [value]="searchQuery()" 
+        (input)="onSearchChange(getSearchEventValue($event))" />
+    </div>
+    <div class="filter-col">
+      <div style="display: flex; flex-direction: column; gap: 4px;">
+        <label style="font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: #94a3b8;">
+          Availability
+        </label>
+        <select 
+          is="ds-dropdown-native" 
+          [attr.placeholder]="'All'" 
+          [value]="availability()"
+          (change)="onAvailabilityChange($any($event).target.value)">
+          <option value="">All Statuses</option>
+          <option value="in_stock">In Stock</option>
+          <option value="limited_stock">Limited Stock</option>
+          <option value="backorder">Backorder</option>
+          <option value="discontinued">Discontinued</option>
+          <option value="out_of_stock">Out of Stock</option>
+          <option value="pre_order">Pre-Order</option>
+        </select>
+      </div>
+    </div>
+    <div class="actions-col">
+      <button 
+        is="ds-button-native" 
+        [attr.variant]="'outline'" 
+        style="width: 100%; height: 40px;" 
+        (click)="onClearFilters()">
+        Clear Filters
+      </button>
+    </div>
+  </div>
+
+  <!-- Pagination -->
+  <div class="pagination-bar">
+    <p class="pagination-info">
+      Showing {{ pageInfoStart() }} to {{ pageInfoEnd() }} of {{ totalCount() }} results
+    </p>
+    <div class="pagination-controls">
+      <button 
+        is="ds-button-native" 
+        [attr.variant]="'outline'" 
+        [attr.tiny]="'true'" 
+        [disabled]="page() === 1 || loading()" 
+        (click)="onPrevPage()">
+        Previous
+      </button>
+      <button 
+        is="ds-button-native" 
+        [attr.variant]="'outline'" 
+        [attr.tiny]="'true'" 
+        [disabled]="page() * limit() >= totalCount() || loading()"
+        (click)="onNextPage()">
+        Next
+      </button>
+    </div>
+  </div>
+
+  <!-- Table -->
+  <div class="table-container">
+    @if (loading()) {
+    <div class="loading-overlay">
+      <!-- Loading content -->
+    </div>
+    } @else {
+    <table class="table">
+      <thead>
+        <tr class="table-header-row">
+          @for (col of columns; track col) {
+          <th class="table-header-cell">{{ col }}</th>
+          }
+          <th class="table-header-cell text-right">Actions</th>
+        </tr>
+      </thead>
+      <tbody class="table-body">
+        @if (loading()) {
+        <div class="loading-overlay">
+          <div class="spinner"></div>
+        </div>
+        }
+
+        @for (prod of products(); track trackById($index, prod)) {
+        <tr 
+          is="ds-table-row-native" 
+          [attr.data-row-id]="prod['Index']"
+          [attr.data-index]="prod['Index']"
+          [attr.data-name]="prod['Name']"
+          [attr.data-brand]="prod['Brand']"
+          [attr.data-price]="prod['Price']"
+          [attr.data-availability]="prod['Availability']"
+          [attr.data-columns]="columnsStr"
+        >
+          <td style="padding: 14px 16px; text-align: right;">
+            <div class="actions-cell">
+              <button 
+                is="ds-button-native" 
+                [attr.variant]="'danger'" 
+                [attr.tiny]="'true'" 
+                (click)="onDelete(prod['Index'])">
+                Delete
+              </button>
+            </div>
+          </td>
+        </tr>
+        } @empty {
+        @if (!loading()) {
+        <tr>
+          <td [attr.colspan]="columns.length + 1" class="empty-state">
+            No products found.
+          </td>
+        </tr>
+        }
+        }
+      </tbody>
+    </table>
+    }
+
+  </div>
+</div>

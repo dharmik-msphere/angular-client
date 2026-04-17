@@ -1,0 +1,9 @@
+{
+  "version": "v1",
+  "packages": {
+    "portfolio-design-system": {
+      "signature": "ba9ba91a7ad8a3b9bdfd3199b7c9ff82",
+      "file": true
+    }
+  }
+}
