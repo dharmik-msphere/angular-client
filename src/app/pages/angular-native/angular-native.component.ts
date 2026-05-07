@@ -20,6 +20,7 @@ import {
   BenchmarkMetrics,
 } from '../../components/benchmark-panel/benchmark-panel.component';
 import { ProductsService, Product } from '../../services/products.service';
+import { registerMCPTool } from 'portfolio-design-system';
 
 const COLUMNS = ['Index', 'Name', 'Brand', 'Price', 'Availability'];
 const COLUMNS_STR = COLUMNS.join(',');
@@ -156,6 +157,92 @@ export class AngularNativeComponent implements OnInit, OnDestroy {
     }
 
     this.fetchProducts();
+    this.registerPageTools();
+  }
+
+  private registerPageTools(): void {
+    // 1. Search Tool
+    registerMCPTool({
+      name: 'search_products',
+      description: 'Search for products by name or brand in the table',
+      inputSchema: {
+        type: 'object',
+        properties: { query: { type: 'string' } },
+        required: ['query'],
+      },
+      execute: async (args) => {
+        this.onSearchChange(args['query'] as string);
+        return `Searching for: ${args['query']}`;
+      },
+    });
+
+    // 2. Filter Tool
+    registerMCPTool({
+      name: 'filter_by_availability',
+      description: 'Filter products by their availability status',
+      inputSchema: {
+        type: 'object',
+        properties: {
+          status: {
+            type: 'string',
+            enum: this.availabilityOptions.map((o) => o.value).filter(Boolean),
+          },
+        },
+        required: ['status'],
+      },
+      execute: async (args) => {
+        this.onAvailabilityChange(args['status'] as string);
+        return `Filter applied: ${args['status']}`;
+      },
+    });
+
+    // 3. Delete Tool
+    registerMCPTool({
+      name: 'delete_product',
+      description: 'Delete a product from the table by its Index',
+      inputSchema: {
+        type: 'object',
+        properties: { index: { type: 'string' } },
+        required: ['index'],
+      },
+      execute: async (args) => {
+        await this.onDelete(args['index'] as string);
+        return `Deleted product with index: ${args['index']}`;
+      },
+    });
+
+    // 4. Data Context Tool
+    registerMCPTool({
+      name: 'get_active_products',
+      description: 'Returns the current list of products visible in the table',
+      execute: async () => {
+        return {
+          count: this.products().length,
+          total: this.totalCount(),
+          products: this.products().slice(0, 10), // Limit return size for efficiency
+          message: 'Showing first 10 active products',
+        };
+      },
+    });
+
+    // 5. Pagination Tools
+    registerMCPTool({
+      name: 'next_page',
+      description: 'Move to the next page of products',
+      execute: async () => {
+        this.onNextPage();
+        return `Moved to page ${this.page()}`;
+      },
+    });
+
+    registerMCPTool({
+      name: 'prev_page',
+      description: 'Move to the previous page of products',
+      execute: async () => {
+        this.onPrevPage();
+        return `Moved to page ${this.page()}`;
+      },
+    });
   }
 
   ngOnDestroy(): void {
